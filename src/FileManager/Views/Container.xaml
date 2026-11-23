@@ -10,7 +10,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="FileManager"
     Width="1200"
-    Height="654"
+    Height="700"
     d:DesignHeight="650"
     d:DesignWidth="900"
     ExtendsContentIntoTitleBar="True"
