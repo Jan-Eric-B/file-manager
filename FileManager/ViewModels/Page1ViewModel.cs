@@ -1,8 +1,8 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
-using System.Windows.Media;
-using Wpf.Ui.Common.Interfaces;
+using System.Threading.Tasks;
+using Wpf.Ui.Abstractions.Controls;
 using FileManager.Models.Data;
 
 namespace FileManager.ViewModels;
@@ -27,15 +27,17 @@ public class Page1ViewModel : ObservableObject, INavigationAware
         set => SetProperty(ref _dataGridItemCollection, value);
     }
 
-    public void OnNavigatedFrom()
-    {
-    }
+    public Task OnNavigatedFromAsync()
+        => Task.CompletedTask;
 
-    public void OnNavigatedTo()
+    public Task OnNavigatedToAsync()
     {
         if (!_dataInitialized)
             InitializeData();
+
+        return Task.CompletedTask;
     }
+
     private void InitializeData()
     {
         ListBoxItemCollection = new List<string>()
@@ -85,4 +87,4 @@ public class Page1ViewModel : ObservableObject, INavigationAware
 
         _dataInitialized = true;
     }
-}
+}

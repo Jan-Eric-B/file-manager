@@ -3,8 +3,7 @@
 // Copyright (C) Leszek Pomianowski and WPF UI Contributors.
 // All Rights Reserved.
 
-using System.Windows;
-using Wpf.Ui.Common.Interfaces;
+using Wpf.Ui.Abstractions.Controls;
 using FileManager.ViewModels;
 
 namespace FileManager.Views.Pages;
@@ -17,7 +16,7 @@ public partial class Page3 : INavigableView<Page3ViewModel>
     public Page3(Page3ViewModel viewModel)
     {
         ViewModel = viewModel;
-        Loaded += OnLoaded;
+        DataContext = this;
 
         InitializeComponent();
     }
@@ -26,8 +25,4 @@ public partial class Page3 : INavigableView<Page3ViewModel>
     {
         get;
     }
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        RootPanel.ScrollOwner = ScrollHost;
-    }
-}
+}

@@ -1,6 +1,4 @@
-﻿using Wpf.Ui.Appearance;
-
-namespace FileManager.Views.Windows;
+﻿namespace FileManager.Views.Windows;
 
 /// <summary>
 /// Interaction logic for SettingsWindow.xaml
@@ -11,6 +9,7 @@ public partial class SettingsWindow
     {
         InitializeComponent();
 
-        Wpf.Ui.Appearance.Background.Apply(this, BackgroundType.Mica);
+        // The settings pages have parameterless constructors, so the NavigationView creates them itself.
+        Loaded += (_, _) => RootNavigation.Navigate(typeof(Pages.SettingsPageDashboard));
     }
 }

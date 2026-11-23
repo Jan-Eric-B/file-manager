@@ -5,8 +5,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
-using Wpf.Ui.Mvvm.Contracts;
-using Wpf.Ui.Mvvm.Services;
+using Wpf.Ui;
+using Wpf.Ui.Abstractions;
 using FileManager.Models;
 using FileManager.Services;
 using FileManager.ViewModels;
@@ -36,12 +36,12 @@ public partial class App
             services.AddSingleton<ISnackbarService, SnackbarService>();
 
             // Dialog service
-            services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton<IContentDialogService, ContentDialogService>();
 
             // Page resolver service
-            services.AddSingleton<IPageService, PageService>();
+            services.AddSingleton<INavigationViewPageProvider, PageService>();
 
-            // Page resolver service
+            // Window resolver service
             services.AddSingleton<IWindowService, WindowService>();
 
             // Service containing navigation, same as INavigationWindow... but without window
@@ -104,4 +104,4 @@ public partial class App
     {
         await _host.StartAsync();
     }
-}
+}

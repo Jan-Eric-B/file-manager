@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Wpf.Ui.Mvvm.Contracts;
+using Wpf.Ui;
 using FileManager.Views;
 
 namespace FileManager.Services;
@@ -14,64 +14,33 @@ namespace FileManager.Services;
 /// </summary>
 public class ApplicationHostService : IHostedService
 {
-    private readonly INavigationService _navigationService;
-    private readonly IPageService _pageService;
     private readonly IServiceProvider _serviceProvider;
-    private INavigationWindow _navigationWindow;
 
-    public ApplicationHostService(IServiceProvider serviceProvider, INavigationService navigationService,
-        IPageService pageService)
+    public ApplicationHostService(IServiceProvider serviceProvider)
     {
-        // If you want, you can do something with these services at the beginning of loading the application.
         _serviceProvider = serviceProvider;
-        _navigationService = navigationService;
-        _pageService = pageService;
     }
 
     /// <summary>
     /// Triggered when the application host is ready to start the service.
     /// </summary>
     /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        PrepareNavigation();
+        // The main window navigates to its first page itself once loaded (Container.InitializeUi).
+        if (!Application.Current.Windows.OfType<Container>().Any())
+        {
+            var navigationWindow = (INavigationWindow)_serviceProvider.GetService(typeof(INavigationWindow));
+            navigationWindow.ShowWindow();
+        }
 
-        await HandleActivationAsync();
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Triggered when the application host is performing a graceful shutdown.
     /// </summary>
     /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        await Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Creates main window during activation.
-    /// </summary>
-    private async Task HandleActivationAsync()
-    {
-        await Task.CompletedTask;
-
-        if (!Application.Current.Windows.OfType<Container>().Any())
-        {
-            _navigationWindow = _serviceProvider.GetService(typeof(INavigationWindow)) as INavigationWindow;
-            _navigationWindow!.ShowWindow();
-
-            // NOTICE: You can set this service directly in the window
-            // _navigationWindow.SetPageService(_pageService);
-
-            // NOTICE: In the case of this window, we navigate to the Dashboard after loading with Container.InitializeUi()
-            // _navigationWindow.Navigate(typeof(Views.Pages.Dashboard));
-        }
-
-        await Task.CompletedTask;
-    }
-
-    private void PrepareNavigation()
-    {
-        _navigationService.SetPageService(_pageService);
-    }
+    public Task StopAsync(CancellationToken cancellationToken)
+        => Task.CompletedTask;
 }

@@ -3,22 +3,20 @@
 // Copyright (C) Leszek Pomianowski and WPF UI Contributors.
 // All Rights Reserved.
 
-using System.Windows;
-using System.Windows.Controls;
-using Wpf.Ui.Common.Interfaces;
+using Wpf.Ui.Abstractions.Controls;
 using FileManager.ViewModels;
 
 namespace FileManager.Views.Pages;
 
 /// <summary>
-/// Interaction logic for Page1.xaml
+/// Interaction logic for Page2.xaml
 /// </summary>
 public partial class Page2 : INavigableView<Page2ViewModel>
 {
     public Page2(Page2ViewModel viewModel)
     {
         ViewModel = viewModel;
-        Loaded += OnLoaded;
+        DataContext = this;
 
         InitializeComponent();
     }
@@ -27,8 +25,4 @@ public partial class Page2 : INavigableView<Page2ViewModel>
     {
         get;
     }
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        RootPanel.ScrollOwner = ScrollHost;
-    }
-}
+}
