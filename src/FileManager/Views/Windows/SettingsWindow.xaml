@@ -1,0 +1,122 @@
+﻿<ui:FluentWindow
+    x:Class="FileManager.Views.Windows.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:FileManager.Views.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:FileManager.Views.Pages"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="FileManager - Settings"
+    Width="1000"
+    Height="500"
+    d:DesignHeight="450"
+    d:DesignWidth="900"
+    ExtendsContentIntoTitleBar="True"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Grid>
+        <!--  The first division of the grid divides the application into the top bar (TitleBar) and the content itself  -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Contains Buttons responsible for maximizing, minimizing and closing the app. It also has a background colored strip that allows you to move the application around  -->
+        <ui:TitleBar
+            x:Name="RootTitleBar"
+            Grid.Row="0"
+            Padding="16,0"
+            ForceShutdown="False"
+            ShowHelp="False"
+            ShowMaximize="False"
+            ShowMinimize="False" />
+
+        <!-- Navigation and pages -->
+        <ui:NavigationView
+            x:Name="RootNavigation"
+            Grid.Row="1"
+            BreadcrumbBar="{Binding ElementName=RootBreadcrumb}"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleVisible="False"
+            OpenPaneLength="200"
+            PaneDisplayMode="Left">
+            <!--  Profile card displays the app's icon, name, and subtitle  -->
+            <ui:NavigationView.PaneHeader>
+                <Grid Margin="6,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Image -->
+                    <Border
+                        Grid.Column="0"
+                        Width="40"
+                        Height="40"
+                        CornerRadius="20">
+                        <Border.Background>
+                            <ImageBrush ImageSource="pack://application:,,,/Resources/Icons/FileManager_Full.png" />
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Text-->
+                    <StackPanel
+                        Grid.Column="1"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center">
+                        <TextBlock FontWeight="Medium" Text="Settings" />
+                        <TextBlock Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="Version [TEMP]" />
+                    </StackPanel>
+                </Grid>
+            </ui:NavigationView.PaneHeader>
+            <ui:NavigationView.Header>
+                <ui:BreadcrumbBar x:Name="RootBreadcrumb" Margin="26,0,0,18" />
+            </ui:NavigationView.Header>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem
+                    Content="General"
+                    TargetPageTag="general"
+                    TargetPageType="{x:Type pages:SettingsGeneralPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:ImageIcon Width="20" Height="20" Source="pack://application:,,,/Resources/Icons/Settings/GeneralIcon.ico" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                    Content="GUI"
+                    TargetPageTag="gui"
+                    TargetPageType="{x:Type pages:SettingsGuiPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:ImageIcon Width="20" Height="20" Source="pack://application:,,,/Resources/Icons/Settings/GuiIcon.ico" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                    Content="Extensions"
+                    TargetPageTag="extensions"
+                    TargetPageType="{x:Type pages:SettingsExtensionsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:ImageIcon Width="20" Height="20" Source="pack://application:,,,/Resources/Icons/Settings/ExtensionsIcon.ico" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                    Content="Logging"
+                    TargetPageTag="logging"
+                    TargetPageType="{x:Type pages:SettingsLoggingPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:ImageIcon Width="20" Height="20" Source="pack://application:,,,/Resources/Icons/Settings/LoggingIcon.ico" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                    Content="About"
+                    TargetPageTag="about"
+                    TargetPageType="{x:Type pages:SettingsAboutPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:ImageIcon Width="20" Height="20" Source="pack://application:,,,/Resources/Icons/Settings/AboutIcon.ico" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+        </ui:NavigationView>
+    </Grid>
+</ui:FluentWindow>

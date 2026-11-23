@@ -1,0 +1,115 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net11.0-windows10.0.22000.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <StartupObject>FileManager.App</StartupObject>
+    <ApplicationIcon>FileManager.ico</ApplicationIcon>
+    <AssemblyName>FileManager</AssemblyName>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <Version>$(Version)</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\Data\**" />
+    <EmbeddedResource Remove="Models\Data\**" />
+    <None Remove="Models\Data\**" />
+    <Page Remove="Models\Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="ExiftoolWrapper" Version="5.2.0" />
+    <PackageReference Include="ImageComparison" Version="2.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Extensions.json" />
+    <None Remove="Resources\FileManager.png" />
+    <None Remove="Resources\Icons\FileManager.ico" />
+    <None Remove="Resources\Icons\FileManager.png" />
+    <None Remove="Resources\Icons\FileManager.svg" />
+    <None Remove="Resources\Icons\FileManager_Full.png" />
+    <None Remove="Resources\Icons\Settings\AboutIcon.ico" />
+    <None Remove="Resources\Icons\Settings\ExtensionsIcon.ico" />
+    <None Remove="Resources\Icons\Settings\GeneralIcon.ico" />
+    <None Remove="Resources\Icons\Settings\GuiIcon.ico" />
+    <None Remove="Resources\Icons\Settings\LoggingIcon.ico" />
+    <None Remove="Resources\microsoft-shell-desktop.ico" />
+    <None Remove="Resources\microsoft-shell-settings.ico" />
+    <None Remove="Resources\FileManager_Full.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="FileManager.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Include="Extensions\exiftool%28-k%29.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Settings\GeneralPageSettings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GeneralPageSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Settings\Presets.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Presets.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Settings\SearchFilters.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SearchFilters.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Settings\ThemeSettings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ThemeSettings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\Settings\GeneralPageSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>GeneralPageSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Resources\Settings\Presets.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Presets.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Resources\Settings\SearchFilters.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>SearchFilters.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Resources\Settings\ThemeSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ThemeSettings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Icons\FileManager.ico" />
+    <Resource Include="Resources\Icons\FileManager.png" />
+    <Resource Include="Resources\Icons\FileManager.svg" />
+    <Resource Include="Resources\Icons\FileManager_Full.png" />
+    <Resource Include="Resources\Icons\Settings\AboutIcon.ico" />
+    <Resource Include="Resources\Icons\Settings\ExtensionsIcon.ico" />
+    <Resource Include="Resources\Icons\Settings\GeneralIcon.ico" />
+    <Resource Include="Resources\Icons\Settings\GuiIcon.ico" />
+    <Resource Include="Resources\Icons\Settings\LoggingIcon.ico" />
+  </ItemGroup>
+
+</Project>

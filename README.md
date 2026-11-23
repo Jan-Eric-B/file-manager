@@ -16,14 +16,17 @@ The fancy UI is built using [WPF UI](https://github.com/lepoco/wpfui) 4.3.
 * [WPF UI](https://github.com/lepoco/wpfui) 4.3: Fluent window with Mica backdrop, `NavigationView`, light and dark themes
 * [Microsoft.Extensions.Hosting](https://www.nuget.org/packages/Microsoft.Extensions.Hosting) 11: dependency injection and app lifetime
 * [CommunityToolkit.Mvvm](https://www.nuget.org/packages/CommunityToolkit.Mvvm) 8.4: MVVM base classes
+* [ExiftoolWrapper](https://www.nuget.org/packages/ExiftoolWrapper) 5.2: metadata removal through [ExifTool](https://exiftool.org/)
+* [ImageComparison](https://www.nuget.org/packages/ImageComparison) 2.0: grouping similar images
+* [Ookii.Dialogs.Wpf](https://www.nuget.org/packages/Ookii.Dialogs.Wpf) 5.0: folder picker
 
 ### Building from source
 
 Requirements: Windows 10 version 1809 or later and the [.NET 11 SDK](https://dotnet.microsoft.com/download).
 
 ```shell
-dotnet build FileManager/FileManager.csproj
-dotnet run --project FileManager
+dotnet build src/FileManager/FileManager.csproj
+dotnet run --project src/FileManager
 ```
 
 ## Installation
@@ -45,6 +48,7 @@ dotnet run --project FileManager
 * Flipping, rotating or grayscaling images or videos
 * Extracting specific from a video
 * Cutting and merging of videos
+* Editing Folders
 
 ## Features
 
