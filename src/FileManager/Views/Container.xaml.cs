@@ -13,11 +13,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Wpf.Ui;
+using Wpf.Ui.Abstractions;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
-using Wpf.Ui.Controls.Interfaces;
-using Wpf.Ui.Mvvm.Contracts;
 using CheckBox = System.Windows.Controls.CheckBox;
+using TextBlock = System.Windows.Controls.TextBlock;
 using Timer = System.Windows.Forms.Timer;
 
 namespace FileManager.Views;
@@ -52,7 +53,7 @@ public partial class Container : INavigationWindow
 
     #region Main
 
-    public Container(ContainerViewModel viewModel, INavigationService navigationService, IPageService pageService, IThemeService themeService, ISnackbarService snackbarService, IDialogService dialogService, IWindowService windowService)
+    public Container(ContainerViewModel viewModel, INavigationService navigationService, INavigationViewPageProvider pageProvider, IThemeService themeService, ISnackbarService snackbarService, IWindowService windowService)
     {
         // Assign the view model
         ViewModel = viewModel;
@@ -65,25 +66,14 @@ public partial class Container : INavigationWindow
         InitializeComponent();
 
         // We define a page provider for navigation
-        SetPageService(pageService);
+        SetPageService(pageProvider);
 
         // If you want to use INavigationService instead of INavigationWindow you can define its navigation here.
         navigationService.SetNavigationControl(RootNavigation);
 
-        // Allows you to use the Snackbar control defined in this window in other pages or windows
+        // Allows you to use the Snackbar presenter defined in this window in other pages or windows
+        snackbarService.SetSnackbarPresenter(RootSnackbar);
 
-        Snackbar snackbar = RootSnackbar;
-        snackbar.Title = "Copied Path";
-        snackbar.Icon = Wpf.Ui.Common.SymbolRegular.Copy24;
-
-
-        snackbarService.SetSnackbarControl(snackbar);
-
-        // Allows you to use the Dialog control defined in this window in other pages or windows
-        dialogService.SetDialogControl(RootDialogOK);
-
-        // We register a window in the Watcher class, which changes the application's theme if the system theme changes.
-        // Wpf.Ui.Appearance.Watcher.Watch(this, Appearance.BackgroundType.Mica, true, false);
         _windowService = windowService;
 
         //ItemsControl.ItemsSource = ViewModel.Files;
@@ -117,7 +107,7 @@ public partial class Container : INavigationWindow
         // Click to copy Path to Clipboard and Doubleclick on Item, tries to open it
         SingleClickAction = () =>
         {
-            snackbarService.Show();
+            snackbarService.Show("Copied Path", ToOpenFile, ControlAppearance.Secondary, new SymbolIcon { Symbol = SymbolRegular.Copy24 }, TimeSpan.FromSeconds(2));
             System.Windows.Clipboard.SetText(ToOpenFile);
         };
         DoubleClickAction = () => StartProcessService.Start(ToOpenFile, true, false);
@@ -146,7 +136,7 @@ public partial class Container : INavigationWindow
     // Theme
     private void NavigationButtonTheme_OnClick(object sender, RoutedEventArgs e)
     {
-        _themeService.SetTheme(_themeService.GetTheme() == ThemeType.Dark ? ThemeType.Light : ThemeType.Dark);
+        _themeService.SetTheme(_themeService.GetTheme() == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark);
     }
 
     // Settings Window
@@ -161,13 +151,13 @@ public partial class Container : INavigationWindow
 
     public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
 
-    public Frame GetFrame() => RootFrame;
-
-    public INavigation GetNavigation() => RootNavigation;
+    public INavigationView GetNavigation() => RootNavigation;
 
     public void CloseWindow() => Close();
 
-    public void SetPageService(IPageService pageService) => RootNavigation.PageService = pageService;
+    public void SetPageService(INavigationViewPageProvider navigationViewPageProvider) => RootNavigation.SetPageProviderService(navigationViewPageProvider);
+
+    public void SetServiceProvider(IServiceProvider serviceProvider) => RootNavigation.SetServiceProvider(serviceProvider);
 
     public void ShowWindow() => Show();
 
@@ -190,7 +180,7 @@ public partial class Container : INavigationWindow
 
         ThemeSettings theme = new()
         {
-            DarkMode = _themeService.GetTheme() == ThemeType.Dark
+            DarkMode = _themeService.GetTheme() == ApplicationTheme.Dark
         };
 
         theme.Save();
@@ -221,11 +211,11 @@ public partial class Container : INavigationWindow
 
         if (theme.DarkMode)
         {
-            _themeService.SetTheme(ThemeType.Dark);
+            _themeService.SetTheme(ApplicationTheme.Dark);
         }
         else
         {
-            _themeService.SetTheme(ThemeType.Light);
+            _themeService.SetTheme(ApplicationTheme.Light);
         }
     }
 
@@ -522,21 +512,31 @@ public partial class Container : INavigationWindow
 
     #endregion Path drag over
 
-    private void navItemGeneral_Activated(object sender, RoutedEventArgs e)
+    #region Layout
+
+    // The file list lives in the NavigationView's ContentOverlay, which also covers the header.
+    // Keep it below the header (path bar and search row) whenever the header changes size.
+    private void HeaderGrid_SizeChanged(object sender, SizeChangedEventArgs e) => AlignFileListWithHeader();
+
+    private void OverlayRoot_Loaded(object sender, RoutedEventArgs e) => AlignFileListWithHeader();
+
+    private void AlignFileListWithHeader()
     {
-        CurrentPage = "GeneralPage";
-        ((CollectionViewSource)this.Resources["cvsFiles"]).View.Refresh();
+        if (PresentationSource.FromVisual(HeaderGrid) is null || PresentationSource.FromVisual(OverlayRoot) is null)
+        {
+            return;
+        }
+
+        double headerBottom = HeaderGrid.TranslatePoint(new System.Windows.Point(0, HeaderGrid.ActualHeight), OverlayRoot).Y;
+        FileListPanel.Margin = new Thickness(FileListPanel.Margin.Left, Math.Max(0, headerBottom), 0, 0);
     }
 
-    private void NavItemImage_Activated(object sender, RoutedEventArgs e)
-    {
-        CurrentPage = "ImagePage";
-        ((CollectionViewSource)this.Resources["cvsFiles"]).View.Refresh();
-    }
+    #endregion Layout
 
-    private void NavItemVideo_Activated(object sender, RoutedEventArgs e)
+    // The file list filter depends on the active page (GeneralPage, ImagePage or VideoPage).
+    private void RootNavigation_Navigated(NavigationView sender, NavigatedEventArgs args)
     {
-        CurrentPage = "VideoPage";
-        ((CollectionViewSource)this.Resources["cvsFiles"]).View.Refresh();
+        CurrentPage = args.Page.GetType().Name;
+        ((CollectionViewSource)this.Resources["cvsFiles"]).View?.Refresh();
     }
 }

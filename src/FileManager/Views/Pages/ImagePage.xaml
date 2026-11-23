@@ -1,4 +1,4 @@
-﻿<ui:UiPage
+﻿<Page
     x:Class="FileManager.Views.Pages.ImagePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
@@ -6,12 +6,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:FileManager.Views.Pages"
+    xmlns:converters="clr-namespace:FileManager.Converters"
     Title="ImagePage"
+    Width="520"
+    HorizontalAlignment="Left"
     d:DataContext="{d:DesignInstance local:ImagePage, IsDesignTimeCreatable=False}"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Scrollable="True"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:NumberBoxValueConverter x:Key="NumberBoxValueConverter" />
+    </Page.Resources>
 
     <VirtualizingStackPanel x:Name="RootPanel" Margin="10,0,10,18" IsVirtualizing="True" VirtualizationMode="Recycling">
         <!-- Move -->
@@ -24,7 +30,7 @@
                 <ui:TextBox Grid.Column="0" x:Name="txSubdirectoryName" Text="{Binding Path=MoveDirectoryName}" PlaceholderText="Subdirectory name" Margin="5,0" HorizontalAlignment="Stretch" Cursor="IBeam"/>
 
                 <VirtualizingStackPanel Orientation="Horizontal" Grid.Column="1">
-                    <ui:NumberBox x:Name="nbMoveToSimilarDifferenceTolerance" Text="{Binding Path=MoveToSimilarDifferenceTolerance}" Min="0" Width="auto" Height="32" Padding="5" Margin="0,0,5,0" Step="0.05" DecimalPlaces="2" ClearButtonEnabled="False" SpinButtonsEnabled="True" IntegersOnly="False"/>
+                    <ui:NumberBox x:Name="nbMoveToSimilarDifferenceTolerance" Value="{Binding Path=MoveToSimilarDifferenceTolerance, Mode=TwoWay, Converter={StaticResource NumberBoxValueConverter}}" Minimum="0" Width="auto" Height="32" Padding="5" Margin="0,0,5,0" SmallChange="0.05" MaxDecimalPlaces="2" ClearButtonEnabled="False" SpinButtonPlacementMode="Inline"/>
                     <ui:Button x:Name="btnMoveToSimilar" Content="Group similar" Click="btnMoveToSimilar_Click"/>
                     <ui:Button x:Name="btnMoveToSimilarExplanation" Content="?" Margin="5,0,0,2" Click="btnMoveToSimilarExplanation_Click" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
                 </VirtualizingStackPanel>
@@ -37,4 +43,4 @@
             </VirtualizingStackPanel>
         </ui:CardExpander>
     </VirtualizingStackPanel>
-</ui:UiPage>
+</Page>

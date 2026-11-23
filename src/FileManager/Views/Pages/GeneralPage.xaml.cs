@@ -6,7 +6,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Wpf.Ui.Common.Interfaces;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace FileManager.Views.Pages
 {
@@ -142,17 +142,17 @@ namespace FileManager.Views.Pages
 
         #region Delete
 
-        private void BtnDeleteItem_Click(object sender, RoutedEventArgs e)
+        private async void BtnDeleteItem_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete these files?", 150, 0) == true)
+            if (await MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete these files?", 150, 0))
             {
                 ViewModel.DeleteItem();
             }
         }
 
-        private void BtnDeleteItemPermanently_Click(object sender, RoutedEventArgs e)
+        private async void BtnDeleteItemPermanently_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete these files permanently?", 150, 0) == true)
+            if (await MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete these files permanently?", 150, 0))
             {
                 ViewModel.DeleteItemPermanently();
             }
@@ -160,15 +160,15 @@ namespace FileManager.Views.Pages
 
         private async void BtnDeleteItemMetaData_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete the MetaData for these files?", 150, 0) == true)
+            if (await MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete the MetaData for these files?", 150, 0))
             {
-                ViewModel.DeleteItemMetaData();
+                await ViewModel.DeleteItemMetaData();
             }
         }
 
-        private void BtnDeleteEmptyFolders_Click(object sender, RoutedEventArgs e)
+        private async void BtnDeleteEmptyFolders_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete all empty folders?", 150, 0) == true)
+            if (await MessageBoxService.MessageBoxYesNo("Deletion", "Do you really want to delete all empty folders?", 150, 0))
             {
                 ViewModel.DeleteEmptyFolders(ViewModel.Container.MainPath);
             }
@@ -222,8 +222,13 @@ namespace FileManager.Views.Pages
                 {
                     int fileNameLenght = file.FileNameWithoutExtension.Length;
 
-                    int start = int.Parse(nbRenameReplaceInputStartInt.Text) - 1;
-                    int lenght = int.Parse(nbRenameReplaceInputLengthInt.Text);
+                    // The NumberBox text can be empty while typing.
+                    if (!int.TryParse(nbRenameReplaceInputStartInt.Text, out int start)
+                        || !int.TryParse(nbRenameReplaceInputLengthInt.Text, out int lenght))
+                    {
+                        return;
+                    }
+                    start -= 1;
 
                     if (start + lenght > fileNameLenght)
                     {

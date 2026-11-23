@@ -2,7 +2,7 @@
 using FileManager.Services;
 using FileManager.ViewModels;
 using System.Windows;
-using Wpf.Ui.Common.Interfaces;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace FileManager.Views.Pages
 {

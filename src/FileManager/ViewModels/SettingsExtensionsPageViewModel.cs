@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Windows.UI.Composition.Scenes;
-using Wpf.Ui.Common.Interfaces;
-using Wpf.Ui.Mvvm.Contracts;
-using Wpf.Ui.Mvvm.Services;
+using System.Threading.Tasks;
+using Wpf.Ui;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace FileManager.ViewModels
 {
@@ -35,16 +35,19 @@ namespace FileManager.ViewModels
             _snackbarService = snackbarService;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (!_dataInitialized)
             {
                 InitializeData();
             }
+
+            return Task.CompletedTask;
         }
 
         private void InitializeData()

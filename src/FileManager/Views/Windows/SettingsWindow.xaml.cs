@@ -1,7 +1,4 @@
-﻿using Wpf.Ui.Appearance;
-using Wpf.Ui.Interop;
-
-namespace FileManager.Views.Windows
+﻿namespace FileManager.Views.Windows
 {
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml
@@ -12,11 +9,8 @@ namespace FileManager.Views.Windows
         {
             InitializeComponent();
 
-            Wpf.Ui.Appearance.Background.Apply(this, BackgroundType.Mica);
-
-            // You can use native methods, but remember that their use is not safe.
-            UnsafeNativeMethods.RemoveWindowTitlebar(this);
-            UnsafeNativeMethods.ApplyWindowCornerPreference(this, WindowCornerPreference.Round);
+            // The settings pages have parameterless constructors, so the NavigationView creates them itself.
+            Loaded += (_, _) => RootNavigation.Navigate(typeof(Pages.SettingsGeneralPage));
         }
     }
 }

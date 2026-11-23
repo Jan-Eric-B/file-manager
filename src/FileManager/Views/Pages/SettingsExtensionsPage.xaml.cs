@@ -2,7 +2,6 @@
 using FileManager.ViewModels;
 using System.Diagnostics;
 using System.Drawing;
-using Wpf.Ui.Mvvm.Interfaces;
 using System.Windows.Media;
 
 namespace FileManager.Views.Pages
@@ -23,12 +22,12 @@ namespace FileManager.Views.Pages
 
             if (ExtensionsService.CheckExistance("exiftool(-k).exe"))
             {
-                btExifToolInstalled.Icon = Wpf.Ui.Common.SymbolRegular.CheckmarkCircle24;
+                btExifToolInstalled.Icon = new Wpf.Ui.Controls.SymbolIcon { Symbol = Wpf.Ui.Controls.SymbolRegular.CheckmarkCircle24 };
                 btExifToolInstalled.Foreground = System.Windows.Media.Brushes.Green;
             }
             else
             {
-                btExifToolInstalled.Icon = Wpf.Ui.Common.SymbolRegular.DismissCircle24;
+                btExifToolInstalled.Icon = new Wpf.Ui.Controls.SymbolIcon { Symbol = Wpf.Ui.Controls.SymbolRegular.DismissCircle24 };
                 btExifToolInstalled.Foreground = System.Windows.Media.Brushes.Red;
 
 

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Wpf.Ui.Common.Interfaces;
+using System.Threading.Tasks;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace FileManager.ViewModels
 {
@@ -22,14 +23,17 @@ namespace FileManager.ViewModels
             Container = container;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (!_dataInitialized)
                 InitializeData();
+
+            return Task.CompletedTask;
         }
 
         private void InitializeData()

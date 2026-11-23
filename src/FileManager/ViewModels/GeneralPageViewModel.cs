@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FileManager.Models;
 using FileManager.Resources;
 using FileManager.Services;
-using Microsoft.AspNetCore.Components;
 using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
@@ -17,12 +16,10 @@ using System.Windows.Forms.Design;
 using System.Windows.Threading;
 using Windows.Media.Playlists;
 using Windows.Storage;
-using Wpf.Ui.Common;
-using Wpf.Ui.Common.Interfaces;
-using Wpf.Ui.Mvvm.Contracts;
-using Wpf.Ui.Mvvm.Services;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using static System.Net.WebRequestMethods;
-using Dispatcher = Microsoft.AspNetCore.Components.Dispatcher;
 using File = System.IO.File;
 
 namespace FileManager.ViewModels
@@ -465,7 +462,7 @@ namespace FileManager.ViewModels
 
         public async Task DeleteItemMetaData()
         {
-            await _snackbarService.ShowAsync("Removing MetaData", "Please wait", SymbolRegular.Clock24);
+            _snackbarService.Show("Removing MetaData", "Please wait", ControlAppearance.Secondary, new SymbolIcon { Symbol = SymbolRegular.Clock24 }, TimeSpan.FromMinutes(10));
 
             _exif = new ExifToolWrapper(ExtensionsService.GetPath("exiftool(-k).exe"));
             _exif.Start();
@@ -480,7 +477,11 @@ namespace FileManager.ViewModels
             _exif.Stop();
             _exif.Dispose();
             //await Container.SearchAsync();
-            await _snackbarService.HideAsync();
+            SnackbarPresenter snackbarPresenter = _snackbarService.GetSnackbarPresenter();
+            if (snackbarPresenter is not null)
+            {
+                await snackbarPresenter.HideCurrent();
+            }
             MessageBoxService.MessageBoxOK("Removing MetaData", "Done", 150, 0);
         }
 

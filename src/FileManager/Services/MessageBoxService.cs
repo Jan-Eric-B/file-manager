@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using Wpf.Ui.Controls;
 
 namespace FileManager.Services
 {
@@ -10,36 +11,16 @@ namespace FileManager.Services
         #region MessageBox OK
 
         /// <summary>
-        /// MessageBox with only OK button
+        /// Non-modal MessageBox with only an OK button. Returns immediately.
         /// </summary>
         /// <param name="height">Is optional. height = '0' sets it to default</param>
         /// <param name="width">Is optional. width = '0' sets it to default</param>
         public static void MessageBoxOK(string title, string text, int height = 0, int width = 0)
         {
-            Wpf.Ui.Controls.MessageBox messageBox = new()
-            {
-                ButtonRightName = "OK",
-                ButtonLeftName = "",
-                ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Transparent,
-            };
+            MessageBox messageBox = Create(title, text, height, width);
+            messageBox.CloseButtonText = "OK";
 
-            if (height > 0)
-            {
-                messageBox.Height = height;
-            }
-
-            if (width > 0)
-            {
-                messageBox.Width = width;
-            }
-
-            messageBox.ButtonRightClick += MessageBoxOK_ButtonRightClickClose;
-            messageBox.Show(title, text);
-        }
-
-        private static void MessageBoxOK_ButtonRightClickClose(object sender, RoutedEventArgs e)
-        {
-            (sender as Wpf.Ui.Controls.MessageBox)?.Close();
+            _ = messageBox.ShowDialogAsync(showAsDialog: false);
         }
 
         #endregion
@@ -47,21 +28,31 @@ namespace FileManager.Services
         #region MessageBox Yes/No
 
         /// <summary>
-        /// MessageBox with yes or no prompt. returns "bool?"
+        /// Modal MessageBox with a yes or no prompt. Returns true when "Yes" was clicked.
         /// </summary>
         /// <param name="height">Is optional. height = '0' sets it to default</param>
         /// <param name="width">Is optional. width = '0' sets it to default</param>
-        public static bool? MessageBoxYesNo(string title, string text, int height = 0, int width = 0)
+        public static async Task<bool> MessageBoxYesNo(string title, string text, int height = 0, int width = 0)
         {
-            Wpf.Ui.Controls.MessageBox messageBox = new()
+            MessageBox messageBox = Create(title, text, height, width);
+            messageBox.PrimaryButtonText = "Yes";
+            messageBox.PrimaryButtonAppearance = ControlAppearance.Primary;
+            messageBox.CloseButtonText = "No";
+
+            MessageBoxResult result = await messageBox.ShowDialogAsync();
+
+            return result == MessageBoxResult.Primary;
+        }
+
+        #endregion
+
+        private static MessageBox Create(string title, string text, int height, int width)
+        {
+            MessageBox messageBox = new()
             {
-                ButtonLeftName = "Yes",
-                ButtonRightName = "No",
-                ButtonRightAppearance = Wpf.Ui.Common.ControlAppearance.Primary,
-                ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Secondary
+                Title = title,
+                Content = text,
             };
-            messageBox.ButtonLeftClick += MessageBox_ButtonLeftClickYes;
-            messageBox.ButtonRightClick += MessageBox_ButtonRightClickNo;
 
             if (height > 0)
             {
@@ -73,25 +64,7 @@ namespace FileManager.Services
                 messageBox.Width = width;
             }
 
-            messageBox.Title = title;
-            messageBox.Content = text;
-
-            return messageBox.ShowDialog();
+            return messageBox;
         }
-
-        private static void MessageBox_ButtonLeftClickYes(object sender, RoutedEventArgs e)
-        {
-            Wpf.Ui.Controls.MessageBox messageBox = sender as Wpf.Ui.Controls.MessageBox;
-            messageBox.DialogResult = true;
-            messageBox.Close();
-        }
-        private static void MessageBox_ButtonRightClickNo(object sender, RoutedEventArgs e)
-        {
-            Wpf.Ui.Controls.MessageBox messageBox = sender as Wpf.Ui.Controls.MessageBox;
-            messageBox.DialogResult = false;
-            messageBox.Close();
-        }
-
-        #endregion
     }
 }

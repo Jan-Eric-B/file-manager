@@ -1,4 +1,4 @@
-﻿<ui:UiPage
+﻿<Page
     x:Class="FileManager.Views.Pages.SettingsExtensionsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -38,7 +38,7 @@
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" FontSize="23" FontWeight="Bold" VerticalContentAlignment="Center">ExifTool by Phil Harvey</Label>
-                    <ui:Button x:Name="btExifToolInstalled" Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Icon="SubtractCircle24"></ui:Button>
+                    <ui:Button x:Name="btExifToolInstalled" Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Icon="{ui:SymbolIcon SubtractCircle24}"></ui:Button>
                 </Grid>
                 <Label Margin="0,0,0,8">This tool is needed for deleting Metadata.</Label>
                 <Separator/>
@@ -62,7 +62,7 @@
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" FontSize="23" FontWeight="Bold" VerticalContentAlignment="Center">FFmpeg</Label>
-                    <ui:Button x:Name="btFmpegInstalled" Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Icon="SubtractCircle24"></ui:Button>
+                    <ui:Button x:Name="btFmpegInstalled" Grid.Column="1" Background="Transparent" BorderBrush="Transparent" Icon="{ui:SymbolIcon SubtractCircle24}"></ui:Button>
                 </Grid>
                 <Label Margin="0,0,0,8">This tool is needed for editing Videos and Images.</Label>
                 <Separator/>
@@ -79,4 +79,4 @@
         </ui:Card>
     </VirtualizingStackPanel>
         </ScrollViewer>
-</ui:UiPage>
+</Page>

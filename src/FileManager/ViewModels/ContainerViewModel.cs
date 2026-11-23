@@ -313,11 +313,19 @@ namespace FileManager.ViewModels
         // Find file
         private async Task FindFiles(CancellationToken token)
         {
-            SearchOption searchOption = SearchOptionsSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            // Skip folders without read access (e.g. C:\Config.Msi) instead of crashing.
+            // Win32 matching and AttributesToSkip = 0 keep the behavior of the SearchOption overload.
+            EnumerationOptions enumerationOptions = new()
+            {
+                RecurseSubdirectories = SearchOptionsSubdirectories,
+                IgnoreInaccessible = true,
+                MatchType = MatchType.Win32,
+                AttributesToSkip = 0,
+            };
 
             if (EditFileSevice.Check(MainPath))
             {
-                foreach (string filePath in Directory.EnumerateFiles(MainPath, "*.*", searchOption))
+                foreach (string filePath in Directory.EnumerateFiles(MainPath, "*.*", enumerationOptions))
                 {
                     await AddFileAsync(filePath);
                     await Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => FileCount++));
