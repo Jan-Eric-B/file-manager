@@ -1,13 +1,13 @@
 ﻿<ui:FluentWindow
     x:Class="FileManager.Views.Container"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="clr-namespace:FileManager.Views.Pages"
-    xmlns:services="clr-namespace:FileManager.Services"
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+    xmlns:services="clr-namespace:FileManager.Services"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="FileManager"
     Width="1200"
     Height="654"
@@ -19,7 +19,11 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>
-        <CollectionViewSource x:Name="cvsFiles" x:Key="cvsFiles" Source="{Binding Path=ViewModel.Files}" Filter="cvsFiles_Filter" >
+        <CollectionViewSource
+            x:Key="cvsFiles"
+            x:Name="cvsFiles"
+            Filter="cvsFiles_Filter"
+            Source="{Binding Path=ViewModel.Files}">
             <CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="FileName" />
             </CollectionViewSource.SortDescriptions>
@@ -43,6 +47,7 @@
             BreadcrumbBar="{Binding ElementName=RootBreadcrumb}"
             FrameMargin="0"
             IsBackButtonVisible="Collapsed"
+            IsFooterSeparatorVisible="False"
             IsPaneOpen="False"
             Navigated="RootNavigation_Navigated"
             OpenPaneLength="150"
@@ -56,18 +61,41 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <!-- Path -->
-                    <Grid Grid.Row="0" Margin="10,0,10,0">
+                    <!--  Path  -->
+                    <Grid Grid.Row="0" Margin="10,0,0,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
-                        <ui:Button Grid.Column="0" Margin="5,0" Command="{Binding ViewModel.DirectoryScopeOut}" >↩</ui:Button>
-                        <services:SelectableTextBlock Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Center" Text="{Binding Path=ViewModel.MainPath, StringFormat='Path: {0} '}" ToolTip="{Binding Path=ViewModel.MainPath}"/>
-                        <!-- Drop target over the path: drop a folder here, click to copy, double-click to open -->
-                        <Border Grid.Column="1" Height="33" CornerRadius="4" Background="{DynamicResource ControlFillColorDefaultBrush}" AllowDrop="True" Drop="ProgressBar_Drop" DragOver="ProgressBar_DragOver" MouseDown="Path_MouseDown"/>
-                        <ui:Button Grid.Column="2" Margin="5,0,0,0" Command="{Binding ViewModel.OpenFolderDialog}" >...</ui:Button>
+                        <ui:Button
+                            Grid.Column="0"
+                            Margin="5,0"
+                            Command="{Binding ViewModel.DirectoryScopeOut}">
+                            ↩
+                        </ui:Button>
+                        <services:SelectableTextBlock
+                            Grid.Column="1"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{Binding Path=ViewModel.MainPath, StringFormat='Path: {0} '}"
+                            ToolTip="{Binding Path=ViewModel.MainPath}" />
+                        <!--  Drop target over the path: drop a folder here, click to copy, double-click to open  -->
+                        <Border
+                            Grid.Column="1"
+                            Height="33"
+                            AllowDrop="True"
+                            Background="{DynamicResource ControlFillColorDefaultBrush}"
+                            CornerRadius="4"
+                            DragOver="ProgressBar_DragOver"
+                            Drop="ProgressBar_Drop"
+                            MouseDown="Path_MouseDown" />
+                        <ui:Button
+                            Grid.Column="2"
+                            Margin="5,0,0,0"
+                            Command="{Binding ViewModel.OpenFolderDialog}">
+                            ...
+                        </ui:Button>
                     </Grid>
 
                     <Grid Grid.Row="1">
@@ -79,33 +107,84 @@
                         <ui:BreadcrumbBar
                             x:Name="RootBreadcrumb"
                             Grid.Column="0"
-                            Margin="10,5,0,5"
+                            Margin="18,5,0,5"
                             VerticalAlignment="Center"
                             FontSize="24" />
 
-                        <!-- Selection, search, extension and filter -->
-                        <Grid Grid.Column="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <!--  Selection, search, extension and filter  -->
+                        <Grid Grid.Column="1" VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="7*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="7*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <VirtualizingStackPanel Orientation="Horizontal" Grid.Column="0">
-                                <CheckBox x:Name="cboSelectEverySecondFirst" MinWidth="0" Padding="0" ToolTip="selects every second item. All odd items" IsChecked="{Binding Path=ViewModel.SelectEverySecondFirst, Mode=TwoWay}" HorizontalAlignment="Left" VerticalAlignment="Center" Click="cboSelect_Click" />
-                                <CheckBox x:Name="cboSelectEverySecondLast" MinWidth="0" Padding="0" ToolTip="selects every second item. All even items" IsChecked="{Binding Path=ViewModel.SelectEverySecondLast, Mode=TwoWay}" HorizontalAlignment="Left" VerticalAlignment="Center" Click="cboSelect_Click" />
-                                <CheckBox x:Name="cboSelectAll" ToolTip="Select all visible" IsChecked="{Binding Path=ViewModel.SelectAll, Mode=TwoWay}" Margin="12,0,12,0" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Select All" Cursor="Hand" Click="cboSelect_Click" />
+                            <VirtualizingStackPanel Grid.Column="0" Orientation="Horizontal">
+                                <CheckBox
+                                    x:Name="cboSelectEverySecondFirst"
+                                    MinWidth="0"
+                                    Padding="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Click="cboSelect_Click"
+                                    IsChecked="{Binding Path=ViewModel.SelectEverySecondFirst, Mode=TwoWay}"
+                                    ToolTip="selects every second item. All odd items" />
+                                <CheckBox
+                                    x:Name="cboSelectEverySecondLast"
+                                    MinWidth="0"
+                                    Padding="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Click="cboSelect_Click"
+                                    IsChecked="{Binding Path=ViewModel.SelectEverySecondLast, Mode=TwoWay}"
+                                    ToolTip="selects every second item. All even items" />
+                                <CheckBox
+                                    x:Name="cboSelectAll"
+                                    MinWidth="0"
+                                    Margin="10,0,12,0"
+                                    Padding="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Click="cboSelect_Click"
+                                    Content="Select All"
+                                    Cursor="Hand"
+                                    IsChecked="{Binding Path=ViewModel.SelectAll, Mode=TwoWay}"
+                                    ToolTip="Select all visible" />
                             </VirtualizingStackPanel>
 
-                            <ui:TextBox x:Name="txSearch" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=ViewModel.SearchInput}" Cursor="IBeam" Padding="5" TextChanged="TextBox_TextChanged"/>
+                            <ui:TextBox
+                                x:Name="txSearch"
+                                Grid.Column="1"
+                                Padding="5"
+                                VerticalAlignment="Center"
+                                Cursor="IBeam"
+                                Text="{Binding Path=ViewModel.SearchInput}"
+                                TextChanged="TextBox_TextChanged" />
 
-                            <ComboBox x:Name="cmbFileExtensions" Grid.Column="2" Background="Transparent" Height="40" Margin="5,0,0,0" SelectedIndex="{Binding Path=ViewModel.SelectedFileExtension}" ItemsSource="{Binding Path=ViewModel.FileExtensions}" SelectionChanged="cmbFileExtensions_SelectionChanged"/>
+                            <ComboBox
+                                x:Name="cmbFileExtensions"
+                                Grid.Column="2"
+                                Height="{Binding ActualHeight, ElementName=txSearch}"
+                                Margin="5,0,0,0"
+                                Padding="10,5"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                ItemsSource="{Binding Path=ViewModel.FileExtensions}"
+                                SelectedIndex="{Binding Path=ViewModel.SelectedFileExtension}"
+                                SelectionChanged="cmbFileExtensions_SelectionChanged" />
 
-                            <Menu Grid.Column="3" Background="Transparent" HorizontalAlignment="Right" Height="45">
+                            <Menu
+                                Grid.Column="3"
+                                Height="45"
+                                HorizontalAlignment="Right"
+                                Background="Transparent">
                                 <ui:MenuItem Header="Filter" Icon="{ui:SymbolIcon Filter24}">
                                     <StackPanel>
-                                        <CheckBox Content="Subdirectories" IsChecked="{Binding Path=ViewModel.SearchOptionsSubdirectories, Mode=TwoWay}" Click="CheckBox_Click" />
+                                        <CheckBox
+                                            Click="CheckBox_Click"
+                                            Content="Subdirectories"
+                                            IsChecked="{Binding Path=ViewModel.SearchOptionsSubdirectories, Mode=TwoWay}" />
                                         <CheckBox Content="Case sensitive" IsChecked="{Binding Path=ViewModel.SearchOptionsCaseSensitive, Mode=TwoWay}" />
                                         <CheckBox Content="File Name" IsChecked="{Binding Path=ViewModel.SearchOptionsFileName, Mode=TwoWay}" />
                                         <CheckBox Content="File Content" IsChecked="{Binding Path=ViewModel.SearchOptionsFileContent, Mode=TwoWay}" />
@@ -135,7 +214,7 @@
                     TargetPageType="{x:Type pages:VideoPage}" />
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
-                <!-- Items without a TargetPageType act as buttons. -->
+                <!--  Items without a TargetPageType act as buttons.  -->
                 <ui:NavigationViewItem
                     Click="NavigationButtonTheme_OnClick"
                     Content="Theme"
@@ -149,29 +228,58 @@
             </ui:NavigationView.FooterMenuItems>
             <ui:NavigationView.ContentOverlay>
                 <Grid x:Name="OverlayRoot" Loaded="OverlayRoot_Loaded">
-                    <!-- File list, right of the 520 px page and below the header (top margin set in HeaderGrid_SizeChanged) -->
+                    <!--  File list, right of the 520 px page and below the header (top margin set in HeaderGrid_SizeChanged)  -->
                     <Grid x:Name="FileListPanel" Margin="520,0,0,0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
 
-                        <Border Grid.Row="0" Background="{DynamicResource ControlFillColorDefaultBrush}" CornerRadius="8,0,0,0">
+                        <Border
+                            Grid.Row="0"
+                            Background="{DynamicResource ControlFillColorDefaultBrush}"
+                            CornerRadius="8,0,0,0">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <ItemsControl Name="ItemsControl" Margin="15" ItemsSource="{Binding Source={StaticResource cvsFiles}}" Background="#00000000" BorderBrush="#00000000">
+                                <ItemsControl
+                                    Name="ItemsControl"
+                                    Margin="15"
+                                    Background="#00000000"
+                                    BorderBrush="#00000000"
+                                    ItemsSource="{Binding Source={StaticResource cvsFiles}}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Grid>
-                                                <VirtualizingStackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                                    <CheckBox Checked="CheckBox_Checked" IsChecked="{Binding IsChecked, Mode=TwoWay}" Unchecked="CheckBox_Unchecked" Margin="3" MouseEnter="Checkbox_OnMouseEnter" GotMouseCapture="Checkbox_OnGotMouseCapture"/>
-                                                    <VirtualizingStackPanel Orientation="Horizontal" Margin="8,0,0,0" >
-                                                        <TextBlock Text="{Binding SubdirectoryPath}" FontStyle="Italic"  FontSize="12" Margin="0,2,0,0" VerticalAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" />
-                                                        <services:SelectableTextBlock services:HighlightTermBehavior.Text="{Binding FileName}" services:HighlightTermBehavior.TermToBeHighlighted="{Binding HighlightedText}" VerticalAlignment="Center" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" />
+                                                <VirtualizingStackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                                    <CheckBox
+                                                        MinWidth="0"
+                                                        Margin="3"
+                                                        Padding="0"
+                                                        Checked="CheckBox_Checked"
+                                                        GotMouseCapture="Checkbox_OnGotMouseCapture"
+                                                        IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                                        MouseEnter="Checkbox_OnMouseEnter"
+                                                        Unchecked="CheckBox_Unchecked" />
+                                                    <VirtualizingStackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                                                        <TextBlock
+                                                            Margin="0,2,0,0"
+                                                            VerticalAlignment="Center"
+                                                            FontSize="12"
+                                                            FontStyle="Italic"
+                                                            MouseLeftButtonDown="TextBlock_MouseLeftButtonDown"
+                                                            Text="{Binding SubdirectoryPath}" />
+                                                        <services:SelectableTextBlock
+                                                            VerticalAlignment="Center"
+                                                            services:HighlightTermBehavior.TermToBeHighlighted="{Binding HighlightedText}"
+                                                            services:HighlightTermBehavior.Text="{Binding FileName}"
+                                                            MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" />
                                                     </VirtualizingStackPanel>
                                                 </VirtualizingStackPanel>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
-                                                    <Border CornerRadius="10" Background="{DynamicResource ApplicationBackgroundBrush}">
-                                                        <TextBlock Text="{Binding FileSize}" Padding="5"/>
+                                                <StackPanel
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Orientation="Horizontal">
+                                                    <Border Background="{DynamicResource ApplicationBackgroundBrush}" CornerRadius="10">
+                                                        <TextBlock Padding="5" Text="{Binding FileSize}" />
                                                     </Border>
                                                 </StackPanel>
                                             </Grid>
@@ -181,30 +289,43 @@
                             </ScrollViewer>
                         </Border>
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
                             <TextBlock Text="{Binding ViewModel.FileCount, StringFormat=' {0} Elements | '}" />
                             <TextBlock Text="{Binding ViewModel.FileCountSelected, StringFormat=' {0} Selected Elements'}" />
                         </StackPanel>
                     </Grid>
 
-                    <!-- Pop-ups shown through ISnackbarService -->
+                    <!--  Pop-ups shown through ISnackbarService  -->
                     <ui:SnackbarPresenter x:Name="RootSnackbar" MaxWidth="600" />
                 </Grid>
             </ui:NavigationView.ContentOverlay>
         </ui:NavigationView>
 
-        <!-- Title (Row 0)-->
+        <!--  Title (Row 0)  -->
         <ui:TitleBar
-            Title="FileManager"
             Grid.Row="0"
-            Padding="16,0"
+            Height="30"
             ForceShutdown="False"
             ShowHelp="False"
             ShowMaximize="True"
             ShowMinimize="True">
-            <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="pack://application:,,,/Resources/Icons/FileManager.png" />
-            </ui:TitleBar.Icon>
+            <ui:TitleBar.Header>
+                <StackPanel
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <Image
+                        Height="19"
+                        Margin="0,0,6,0"
+                        VerticalAlignment="Center"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Resources/Icons/FileManager.png" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        Text="FileManager" />
+                </StackPanel>
+            </ui:TitleBar.Header>
         </ui:TitleBar>
 
     </Grid>
